@@ -2,7 +2,7 @@ version: '3'
 
 services:
   notion-rss:
-    image: kaliteam/notion-rss:latest
+    image: lixuanxin9527/notion-rss:latest
     ports:
       - "9527:9527"
     environment:

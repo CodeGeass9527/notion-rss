@@ -16,6 +16,7 @@ use std::fs::File;
 use std::net::SocketAddr;
 use std::str::FromStr;
 use std::thread;
+use tauri::Emitter;
 
 fn get_ssl_config() -> Result<SslAcceptorBuilder> {
     let mut builder = SslAcceptor::mozilla_intermediate(SslMethod::tls())?;
@@ -194,7 +195,7 @@ pub fn run_server(window: Option<tauri::Window>) {
             api_server(address, NOTION_FEED.config.token.clone());
         });
     } else if let Some(w) = window {
-        w.emit("ERROR", "Invalid listening address")
+        w.emit_to("main","ERROR", "Invalid listening address")
             .unwrap_or_default();
     } else {
         println!("Invalid listening address");

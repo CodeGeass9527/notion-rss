@@ -11,6 +11,11 @@ use notion_sdk::pagination::{Object, Pageable, PagingCursor};
 use notion_sdk::search::{
     CheckboxCondition, DatabaseQuery, FilterCondition, PropertyCondition, TextCondition,
 };
+use tauri::Emitter;
+use tauri::WebviewWindow; 
+
+
+
 
 async fn get_source(start_pages: &Option<PagingCursor>) -> Result<Object> {
     // Filter the source `Enabled` by the checkbox
@@ -96,7 +101,7 @@ pub async fn update() {
     let (_r1, _r2) = tokio::join!(source_handle, rss_handle);
 }
 #[cfg(not(feature = "cli"))]
-pub async fn update(window: Option<tauri::Window>) {
+pub async fn update(window: Option<WebviewWindow>) { // 更新参数类型为 WebviewWindow
     let (mut page_sender, mut page_receiver) = unbounded();
     let o_window = window.clone();
     let source_handle = tokio::task::spawn(async move {
@@ -118,7 +123,7 @@ pub async fn update(window: Option<tauri::Window>) {
                 }
                 Err(err) => {
                     if let Some(w) = o_window.clone() {
-                        w.emit("INFO", err.to_string()).unwrap_or_default();
+                        w.emit_to("main", "INFO", err.to_string()).unwrap_or_default();
                     } else {
                         println!("Update failed: {}", err);
                     }
@@ -148,14 +153,14 @@ pub async fn update(window: Option<tauri::Window>) {
             match result {
                 Ok(result) => {
                     if let Some(w) = window.clone() {
-                        w.emit("INFO", result.to_string()).unwrap_or_default();
+                        w.emit_to("main", "INFO", result.to_string()).unwrap_or_default();
                     } else {
                         println!("Update succeeded: {}", result);
                     }
                 }
                 Err(err) => {
                     if let Some(w) = window.clone() {
-                        w.emit("ERROR", err.to_string()).unwrap_or_default();
+                        w.emit_to("main", "ERROR", err.to_string()).unwrap_or_default();
                     } else {
                         println!("Update failed: {}", err)
                     }

@@ -2,95 +2,77 @@
   "build": {
     "beforeDevCommand": "yarn dev",
     "beforeBuildCommand": "yarn build",
-    "devPath": "http://localhost:1420",
-    "distDir": "../dist",
-    "withGlobalTauri": false
+    "frontendDist": "../dist",
+    "devUrl": "http://localhost:1420"
   },
-  "package": {
-    "version": "2023.3.10",
-    "productName": "notion-rss"
-  },
-  "tauri": {
-    "systemTray": {
-      "iconPath": "icons/icon.ico",
-      "iconAsTemplate": true
-    },
-    "allowlist": {
-      "all": false,
-      "window": {
-        "all": true,
-        "close": true,
-        "hide": true,
-        "show": true,
-        "maximize": true,
-        "minimize": true,
-        "unmaximize": true,
-        "unminimize": true
+  "bundle": {
+    "active": true,
+    "category": "DeveloperTool",
+    "copyright": "© 2023 Kali-Team All Rights Reserved",
+    "targets": "appimage",
+    "externalBin": [],
+    "icon": [
+      "icons/32x32.png",
+      "icons/128x128.png",
+      "icons/128x128@2x.png",
+      "icons/icon.icns",
+      "icons/icon.ico"
+    ],
+    "windows": {
+      "webviewInstallMode": {
+        "type": "embedBootstrapper"
       },
-      "process": {
-        "all": true
-      },
-      "clipboard": {
-        "all": true,
-        "writeText": true,
-        "readText": true
-      }
+      "digestAlgorithm": "sha256"
     },
-    "bundle": {
-      "active": true,
-      "category": "DeveloperTool",
-      "copyright": "© 2023 Kali-Team All Rights Reserved",
+    "longDescription": "Build your own RSS Feeds in Notion.",
+    "macOS": {
+      "entitlements": null,
+      "exceptionDomain": "",
+      "frameworks": [],
+      "providerShortName": null,
+      "signingIdentity": null
+    },
+    "resources": [],
+    "shortDescription": "Build your own RSS Feeds in Notion.",
+    "linux": {
       "deb": {
         "depends": [
           "openssl"
         ]
-      },
-      "externalBin": [],
-      "icon": [
-        "icons/32x32.png",
-        "icons/128x128.png",
-        "icons/128x128@2x.png",
-        "icons/icon.icns",
-        "icons/icon.ico"
-      ],
-      "identifier": "com.emo.notion-rss",
-      "longDescription": "Build your own RSS Feeds in Notion.",
-      "macOS": {
-        "entitlements": null,
-        "exceptionDomain": "",
-        "frameworks": [],
-        "providerShortName": null,
-        "signingIdentity": null
-      },
-      "resources": [],
-      "shortDescription": "Build your own RSS Feeds in Notion.",
-      "targets": "all",
-      "windows": {
-        "webviewInstallMode": {
-          "type": "embedBootstrapper"
-        },
-        "digestAlgorithm": "sha256"
       }
     },
-    "security": {
-      "csp": "script-src 'unsafe-eval' 'self'; default-src blob: data: filesystem: ws: wss: http: https: tauri: 'unsafe-eval' 'unsafe-inline' 'self'; img-src data: 'self';"
-    },
+    "createUpdaterArtifacts": "v1Compatible"
+  },
+  "productName": "notion-rss",
+  "mainBinaryName": "notion-rss",
+  "version": "2025.4.07",
+  "identifier": "com.emo.notion-rss",
+  "plugins": {
     "updater": {
-      "active": true,
+      "pubkey": "dW50cnVzdGVkIGNvbW1lbnQ6IG1pbmlzaWduIHB1YmxpYyBrZXk6IDVCQzc1OTg2RkUwMDI3MkQKUldRdEp3RCtobG5IVytVVzdveGRRTWQ4U2o3RjlBcDNwV1ZreWpxbnZ0TG9JTWVseDk0Y3U2MlQK",
       "endpoints": [
-        "https://github.com/cn-kali-team/notion-rss/releases/latest/download/latest.json"
-      ],
-      "dialog": true,
-      "pubkey": "dW50cnVzdGVkIGNvbW1lbnQ6IG1pbmlzaWduIHB1YmxpYyBrZXk6IDVCQzc1OTg2RkUwMDI3MkQKUldRdEp3RCtobG5IVytVVzdveGRRTWQ4U2o3RjlBcDNwV1ZreWpxbnZ0TG9JTWVseDk0Y3U2MlQK"
-    },
+        "https://github.com/cn-kali-team/CodeGeass9527/releases/latest/download/latest.json"
+      ]
+    }
+  },
+  "app": {
     "windows": [
       {
         "fullscreen": false,
         "height": 550,
         "resizable": false,
         "title": "notion-rss",
-        "width": 1200
+        "width": 1200,
+        "useHttpsScheme": true
       }
-    ]
+    ],
+    "withGlobalTauri": false,
+    "trayIcon": {
+      "iconPath": "icons/icon.ico",
+      "iconAsTemplate": true
+    },
+    "security": {
+      "csp": "script-src 'unsafe-eval' 'self'; default-src blob: data: filesystem: ws: wss: http: https: tauri: 'unsafe-eval' 'unsafe-inline' 'self'; img-src data: 'self';; connect-src ipc: http://ipc.localhost"
+    }
   }
 }

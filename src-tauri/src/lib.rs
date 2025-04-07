@@ -809,7 +809,7 @@ pub fn read_file_to_feed(file_url: &str) -> HashSet<String> {
 }
 
 fn to_text(t: feed_rs::model::Text) -> String {
-    let tcs = t.content_type.subtype();
+    let tcs = t.content_type.subty();
     return match tcs.as_str() {
         "plain" => t.content,
         "html" => {

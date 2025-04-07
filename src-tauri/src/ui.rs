@@ -1,10 +1,13 @@
+// src-tauri/src/ui.rs
 use crate::api::run_server;
 use crate::cli::NotionConfig;
 use crate::rss::{add_subscribe, update};
 use crate::{op_to_url, CONFIG, NOTION_FEED};
 use notion_sdk::pagination::Object;
 use serde::{Deserialize, Serialize};
-use tauri::{App, AppHandle, Manager};
+use tauri::{App, AppHandle, Manager, WebviewUrl}; // 更新导入
+use tauri::WebviewWindowBuilder;
+use tauri::Emitter;
 #[tauri::command]
 pub fn init_config() -> NotionConfig {
     let c = CONFIG.read().unwrap().clone();
@@ -27,7 +30,7 @@ pub fn save_config(config: NotionConfig) -> String {
 }
 
 #[tauri::command]
-pub async fn update_once(window: tauri::Window) {
+pub async fn update_once(window: tauri::WebviewWindow) {
     #[cfg(not(feature = "cli"))]
     update(Some(window.clone())).await;
 }
@@ -47,18 +50,18 @@ pub async fn import_feed(content: String, window: tauri::Window) {
         match add_subscribe(url).await {
             Ok(t) => {
                 window
-                    .emit("INFO", format!("Submitted Successfully: {}.", t))
+                    .emit_to("main", "INFO", format!("Submitted Successfully: {}.", t)) // 更新为 emit_to
                     .unwrap_or_default();
             }
             Err(e) => {
                 window
-                    .emit("ERROR", format!("Submitted Failed: {}.", e))
+                    .emit_to("main", "ERROR", format!("Submitted Failed: {}.", e)) // 更新为 emit_to
                     .unwrap_or_default();
             }
         }
         progress.progress = progress.progress + 1;
         window
-            .emit("PROGRESS", progress.clone())
+            .emit_to("main", "PROGRESS", progress.clone()) // 更新为 emit_to
             .unwrap_or_default();
     }
 }
@@ -68,12 +71,12 @@ pub async fn add_feed(url: String, window: tauri::Window) {
     match add_subscribe(url).await {
         Ok(t) => {
             window
-                .emit("INFO", format!("Submitted Successfully: {}.", t))
+                .emit_to("main", "INFO", format!("Submitted Successfully: {}.", t)) // 更新为 emit_to
                 .unwrap_or_default();
         }
         Err(e) => {
             window
-                .emit("ERROR", format!("Submitted Failed: {}.", e))
+                .emit_to("main", "ERROR", format!("Submitted Failed: {}.", e)) // 更新为 emit_to
                 .unwrap_or_default();
         }
     }
@@ -96,16 +99,16 @@ pub fn resolve_setup(app: &mut App) {
 
 /// create main window
 pub fn create_window(app_handle: &AppHandle) {
-    if let Some(window) = app_handle.get_window("main") {
+    if let Some(window) = app_handle.get_webview_window("main") { // 更新为 get_webview_window
         let _ = window.unminimize();
         let _ = window.show();
         let _ = window.set_focus();
     }
 
-    let builder = tauri::window::WindowBuilder::new(
+    let builder = WebviewWindowBuilder::new( // 更新为 WebviewWindowBuilder
         app_handle,
         "main".to_string(),
-        tauri::WindowUrl::App("index.html".into()),
+        WebviewUrl::App("index.html".into()), // 更新为 WebviewUrl
     )
     .title("notion-rss")
     .center()
@@ -125,11 +128,11 @@ pub fn create_window(app_handle: &AppHandle) {
         {
             Ok(_) => {
                 let app_handle = app_handle.clone();
-                if let Some(window) = app_handle.get_window("main") {
+                if let Some(window) = app_handle.get_webview_window("main") {
                     let _ = set_shadow(&window, true);
                 }
                 tauri::async_runtime::spawn(async move {
-                    if let Some(window) = app_handle.get_window("main") {
+                    if let Some(window) = app_handle.get_webview_window("main") {
                         let _ = window.show();
                         let _ = window.unminimize();
                         let _ = window.set_focus();

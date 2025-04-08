@@ -145,7 +145,7 @@ jobs:
       - name: install frontend dependencies
         run: yarn install # change this to npm or pnpm depending on which one you use
       - name: Build tauri app
-        uses: tauri-apps/tauri-action@v0.4.5
+        uses: tauri-apps/tauri-action@v0.3.1
         if: matrix.platform == 'win-msvc' ||  matrix.platform == 'linux' || matrix.platform == 'macos' || matrix.platform == 'macos_aarch64'
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
@@ -154,6 +154,10 @@ jobs:
         with:
           releaseId: ${{ needs.create-release.outputs.release_id }}
           args: --target ${{ matrix.target }}
+      - name: Set env for musl target
+        if: matrix.target == 'x86_64-unknown-linux-musl'
+        run: |
+          echo "CC=musl-gcc" >> $GITHUB_ENV
       - name: Build cli release binary
         shell: bash
         run: |

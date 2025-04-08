@@ -13,7 +13,8 @@ use notion_sdk::database::relation::RelationValue;
 use notion_sdk::database::select::SelectedValue;
 use notion_sdk::database::Color;
 use notion_sdk::block::id::BlockId;
-use notion_sdk::block::{Block, BlockCommon};
+use notion_sdk::block::{Block, BlockCommon, TextAndChildren};
+use notion_sdk::user::{UserCommon};
 use notion_sdk::pages::id::PageId;
 use notion_sdk::pages::{Page, UpdatePage};
 use notion_sdk::pagination::Object;
@@ -524,6 +525,7 @@ impl SourcePage {
                                     continue;
                                 }
                             }
+                            let feed_title = to_text(feed.title.unwrap_or_default()); // 使用 unwrap_or_default() 处理 Option
                             let page_properties = make_page(&item, self.id.clone());
                             let page = notion_sdk::pages::CreatePage {
                                 icon: None,
@@ -536,7 +538,7 @@ impl SourcePage {
                                 children: vec![
                                     Block::Heading3 {
                                         common: BlockCommon {
-                                            id: BlockId::new(),
+                                            id: BlockId::default(),
                                             created_time: Utc::now(),
                                             last_edited_time: Utc::now(),
                                             has_children: false,
@@ -550,7 +552,7 @@ impl SourcePage {
                                     },
                                     Block::Paragraph {
                                         common: BlockCommon {
-                                            id: BlockId::new(),
+                                            id: BlockId::default(),
                                             created_time: Utc::now(),
                                             last_edited_time: Utc::now(),
                                             has_children: false,
@@ -560,12 +562,12 @@ impl SourcePage {
                                         paragraph: TextAndChildren {
                                             rich_text: vec![RichText::Text {
                                                 rich_text: RichTextCommon {
-                                                    plain_text: feed.title,
+                                                    plain_text: feed_title,
                                                     href: None,
                                                     annotations: None,
                                                 },
                                                 text: Text {
-                                                    content: feed.title,
+                                                    content: feed_title,
                                                     link: None,
                                                 },
                                             }],
@@ -575,7 +577,7 @@ impl SourcePage {
                                     },
                                     Block::Heading3 {
                                         common: BlockCommon {
-                                            id: BlockId::new(),
+                                            id: BlockId::default(),
                                             created_time: Utc::now(),
                                             last_edited_time: Utc::now(),
                                             has_children: false,
@@ -589,7 +591,7 @@ impl SourcePage {
                                     },
                                     Block::Paragraph {
                                         common: BlockCommon {
-                                            id: BlockId::new(),
+                                            id: BlockId::default(),
                                             created_time: Utc::now(),
                                             last_edited_time: Utc::now(),
                                             has_children: false,
@@ -614,7 +616,7 @@ impl SourcePage {
                                     },
                                     Block::Heading3 {
                                         common: BlockCommon {
-                                            id: BlockId::new(),
+                                            id: BlockId::default(),
                                             created_time: Utc::now(),
                                             last_edited_time: Utc::now(),
                                             has_children: false,
@@ -628,7 +630,7 @@ impl SourcePage {
                                     },
                                     Block::Paragraph {
                                         common: BlockCommon {
-                                            id: BlockId::new(),
+                                            id: BlockId::default(),
                                             created_time: Utc::now(),
                                             last_edited_time: Utc::now(),
                                             has_children: false,
@@ -653,7 +655,7 @@ impl SourcePage {
                                     },
                                     Block::Heading3 {
                                         common: BlockCommon {
-                                            id: BlockId::new(),
+                                            id: BlockId::default(),
                                             created_time: Utc::now(),
                                             last_edited_time: Utc::now(),
                                             has_children: false,
@@ -667,7 +669,7 @@ impl SourcePage {
                                     },
                                     Block::Embed {
                                         common: BlockCommon {
-                                            id: BlockId::new(),
+                                            id: BlockId::default(),
                                             created_time: Utc::now(),
                                             last_edited_time: Utc::now(),
                                             has_children: false,

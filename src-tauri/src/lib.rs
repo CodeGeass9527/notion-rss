@@ -419,6 +419,49 @@ fn make_page(item: &feed_rs::model::Entry, page_id: PageId) -> HashMap<String, P
     page_properties
 }
 
+fn create_common_block() -> BlockCommon {
+    BlockCommon {
+        id: BlockId(uuid::Uuid::new_v4()),
+        created_time: Utc::now(),
+        last_edited_time: Utc::now(),
+        has_children: false,
+        created_by: None,
+        last_edited_by: None,
+    }
+}
+
+fn create_heading(title: &str) -> Block {
+    Block::Heading3 {
+        common: create_common_block(),
+        heading_3: Text {
+            content: title.to_string(),
+            link: None,
+        },
+    }
+}
+
+fn create_paragraph(content: String) -> Block {
+    Block::Paragraph {
+        common: create_common_block(),
+        paragraph: TextAndChildren {
+            rich_text: vec![RichText::Text {
+                rich_text: RichTextCommon {
+                    plain_text: content.clone(),
+                    href: None,
+                    annotations: None,
+                },
+                text: Text {
+                    content,
+                    link: None,
+                },
+            }],
+            children: None,
+            color: TextColor::Default,
+        },
+    }
+}
+
+
 // Database field of the feed
 #[derive(Serialize, Deserialize, Clone, Debug)]
 pub struct SourcePage {
@@ -484,48 +527,6 @@ impl SourcePage {
         Ok(channels)
     }
     
-    fn create_common_block() -> BlockCommon {
-        BlockCommon {
-            id: BlockId(uuid::Uuid::new_v4()),
-            created_time: Utc::now(),
-            last_edited_time: Utc::now(),
-            has_children: false,
-            created_by: None,
-            last_edited_by: None,
-        }
-    }
-    
-    fn create_heading(title: &str) -> Block {
-        Block::Heading3 {
-            common: create_common_block(),
-            heading_3: Text {
-                content: title.to_string(),
-                link: None,
-            },
-        }
-    }
-    
-    fn create_paragraph(content: String) -> Block {
-        Block::Paragraph {
-            common: create_common_block(),
-            paragraph: TextAndChildren {
-                rich_text: vec![RichText::Text {
-                    rich_text: RichTextCommon {
-                        plain_text: content.clone(),
-                        href: None,
-                        annotations: None,
-                    },
-                    text: Text {
-                        content,
-                        link: None,
-                    },
-                }],
-                children: None,
-                color: TextColor::Default,
-            },
-        }
-    }
-
     pub async fn get_feed(mut self) -> Result<Self> {
         let link = match Url::parse(&self.link.clone().unwrap_or_default()) {
             Ok(link) => link,

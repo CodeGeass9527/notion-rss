@@ -13,7 +13,7 @@ use notion_sdk::database::relation::RelationValue;
 use notion_sdk::database::select::SelectedValue;
 use notion_sdk::database::Color;
 use notion_sdk::block::id::BlockId;
-use notion_sdk::block::Block;
+use notion_sdk::block::{Block, BlockCommon};
 use notion_sdk::pages::id::PageId;
 use notion_sdk::pages::{Page, UpdatePage};
 use notion_sdk::pagination::Object;

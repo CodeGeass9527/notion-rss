@@ -431,6 +431,7 @@ fn create_common_block() -> BlockCommon {
 }
 
 fn create_heading(title: &str) -> Block {
+    println!("[create_heading] title = {}", title);
     Block::Heading3 {
         common: create_common_block(),
         heading_3: Text {
@@ -441,6 +442,7 @@ fn create_heading(title: &str) -> Block {
 }
 
 fn create_paragraph(content: String) -> Block {
+    println!("[create_paragraph] content = {}", content);
     Block::Paragraph {
         common: create_common_block(),
         paragraph: TextAndChildren {

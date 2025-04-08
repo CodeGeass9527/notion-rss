@@ -483,6 +483,48 @@ impl SourcePage {
         let channels = feed_rs::parser::parse(&content[..])?;
         Ok(channels)
     }
+    
+    fn create_common_block() -> BlockCommon {
+        BlockCommon {
+            id: BlockId(uuid::Uuid::new_v4()),
+            created_time: Utc::now(),
+            last_edited_time: Utc::now(),
+            has_children: false,
+            created_by: None,
+            last_edited_by: None,
+        }
+    }
+    
+    fn create_heading(title: &str) -> Block {
+        Block::Heading3 {
+            common: create_common_block(),
+            heading_3: Text {
+                content: title.to_string(),
+                link: None,
+            },
+        }
+    }
+    
+    fn create_paragraph(content: String) -> Block {
+        Block::Paragraph {
+            common: create_common_block(),
+            paragraph: TextAndChildren {
+                rich_text: vec![RichText::Text {
+                    rich_text: RichTextCommon {
+                        plain_text: content.clone(),
+                        href: None,
+                        annotations: None,
+                    },
+                    text: Text {
+                        content,
+                        link: None,
+                    },
+                }],
+                children: None,
+                color: TextColor::Default,
+            },
+        }
+    }
 
     pub async fn get_feed(mut self) -> Result<Self> {
         let link = match Url::parse(&self.link.clone().unwrap_or_default()) {
@@ -594,47 +636,6 @@ impl SourcePage {
         self.log = None;
         self.update_source_page(Some(now.clone())).await;
         Ok(self)
-    }
-    fn create_common_block() -> BlockCommon {
-        BlockCommon {
-            id: BlockId(uuid::Uuid::new_v4()),
-            created_time: Utc::now(),
-            last_edited_time: Utc::now(),
-            has_children: false,
-            created_by: None,
-            last_edited_by: None,
-        }
-    }
-    
-    fn create_heading(title: &str) -> Block {
-        Block::Heading3 {
-            common: create_common_block(),
-            heading_3: Text {
-                content: title.to_string(),
-                link: None,
-            },
-        }
-    }
-    
-    fn create_paragraph(content: String) -> Block {
-        Block::Paragraph {
-            common: create_common_block(),
-            paragraph: TextAndChildren {
-                rich_text: vec![RichText::Text {
-                    rich_text: RichTextCommon {
-                        plain_text: content.clone(),
-                        href: None,
-                        annotations: None,
-                    },
-                    text: Text {
-                        content,
-                        link: None,
-                    },
-                }],
-                children: None,
-                color: TextColor::Default,
-            },
-        }
     }
     async fn update_source_page(&self, last_time: Option<DateValue>) {
         let mut page_properties = HashMap::new();

@@ -13,7 +13,7 @@ use notion_sdk::database::relation::RelationValue;
 use notion_sdk::database::select::SelectedValue;
 use notion_sdk::database::Color;
 use notion_sdk::block::id::BlockId;
-use notion_sdk::block::{Block, BlockCommon, TextAndChildren, EmbedFields};
+use notion_sdk::block::{Block, BlockCommon, TextAndChildren, EmbedFields, HeadingText};
 use notion_sdk::pages::id::PageId;
 use notion_sdk::pages::{Page, UpdatePage};
 use notion_sdk::pagination::Object;
@@ -434,9 +434,20 @@ fn create_heading(title: &str) -> Block {
     println!("[create_heading] title = {}", title);
     Block::Heading3 {
         common: create_common_block(),
-        heading_3: Text {
-            content: title.to_string(),
-            link: None,
+        heading_3: HeadingText {
+            rich_text: vec![RichText::Text {
+                rich_text: RichTextCommon {
+                    plain_text: title.to_string(),
+                    href: None,
+                    annotations: None,
+                },
+                text: Text {
+                    content: title.to_string(),
+                    link: None,
+                },
+            }],
+            color: TextColor::Default,
+            is_toggleable: False,
         },
     }
 }
@@ -608,17 +619,17 @@ impl SourcePage {
                 children: vec![
                     create_heading("From"),
                     create_paragraph(feed_title.clone()),
-                    create_heading("Title"),
-                    create_paragraph(self.title.clone()),
-                    create_heading("Description"),
-                    create_paragraph(summary),
-                    create_heading("link"),
-                    Block::Embed {
-                        common: create_common_block(),
-                        embed: EmbedFields {
-                            url: link.to_string(),
-                        },
-                    },
+                    // create_heading("Title"),
+                    // create_paragraph(self.title.clone()),
+                    // create_heading("Description"),
+                    // create_paragraph(summary),
+                    // create_heading("link"),
+                    // Block::Embed {
+                    //     common: create_common_block(),
+                    //     embed: EmbedFields {
+                    //         url: link.to_string(),
+                    //     },
+                    // },
                 ],
             };
     

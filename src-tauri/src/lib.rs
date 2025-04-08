@@ -447,7 +447,7 @@ fn create_heading(title: &str) -> Block {
                 },
             }],
             color: TextColor::Default,
-            is_toggleable: False,
+            is_toggleable: false,
         },
     }
 }
@@ -619,17 +619,17 @@ impl SourcePage {
                 children: vec![
                     create_heading("From"),
                     create_paragraph(feed_title.clone()),
-                    // create_heading("Title"),
-                    // create_paragraph(self.title.clone()),
-                    // create_heading("Description"),
-                    // create_paragraph(summary),
-                    // create_heading("link"),
-                    // Block::Embed {
-                    //     common: create_common_block(),
-                    //     embed: EmbedFields {
-                    //         url: link.to_string(),
-                    //     },
-                    // },
+                    create_heading("Title"),
+                    create_paragraph(self.title.clone()),
+                    create_heading("Description"),
+                    create_paragraph(summary),
+                    create_heading("link"),
+                    Block::Embed {
+                        common: create_common_block(),
+                        embed: EmbedFields {
+                            url: link.to_string(),
+                        },
+                    },
                 ],
             };
     

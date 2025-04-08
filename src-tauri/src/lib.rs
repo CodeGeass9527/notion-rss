@@ -13,7 +13,7 @@ use notion_sdk::database::relation::RelationValue;
 use notion_sdk::database::select::SelectedValue;
 use notion_sdk::database::Color;
 use notion_sdk::block::id::BlockId;
-use notion_sdk::block::{Block, BlockCommon, TextAndChildren};
+use notion_sdk::block::{Block, BlockCommon, TextAndChildren, EmbedFields};
 use notion_sdk::user::{UserCommon};
 use notion_sdk::pages::id::PageId;
 use notion_sdk::pages::{Page, UpdatePage};
@@ -525,7 +525,7 @@ impl SourcePage {
                                     continue;
                                 }
                             }
-                            let feed_title = to_text(feed.title.unwrap_or_default()); // 使用 unwrap_or_default() 处理 Option
+                            let feed_title = to_text(feed.title); // 使用 unwrap_or_default() 处理 Option
                             let page_properties = make_page(&item, self.id.clone());
                             let page = notion_sdk::pages::CreatePage {
                                 icon: None,
@@ -538,12 +538,7 @@ impl SourcePage {
                                 children: vec![
                                     Block::Heading3 {
                                         common: BlockCommon {
-                                            id: BlockId::default(),
-                                            created_time: Utc::now(),
-                                            last_edited_time: Utc::now(),
-                                            has_children: false,
-                                            created_by: UserCommon::default(),
-                                            last_edited_by: UserCommon::default(),
+                                            id: BlockId(uuid::Uuid::new_v4()),
                                         },
                                         heading_3: Text {
                                             content: "From".to_string(),
@@ -552,12 +547,7 @@ impl SourcePage {
                                     },
                                     Block::Paragraph {
                                         common: BlockCommon {
-                                            id: BlockId::default(),
-                                            created_time: Utc::now(),
-                                            last_edited_time: Utc::now(),
-                                            has_children: false,
-                                            created_by: UserCommon::default(),
-                                            last_edited_by: UserCommon::default(),
+                                            id: BlockId(uuid::Uuid::new_v4()),
                                         },
                                         paragraph: TextAndChildren {
                                             rich_text: vec![RichText::Text {
@@ -577,12 +567,7 @@ impl SourcePage {
                                     },
                                     Block::Heading3 {
                                         common: BlockCommon {
-                                            id: BlockId::default(),
-                                            created_time: Utc::now(),
-                                            last_edited_time: Utc::now(),
-                                            has_children: false,
-                                            created_by: UserCommon::default(),
-                                            last_edited_by: UserCommon::default(),
+                                            id: BlockId(uuid::Uuid::new_v4()),
                                         },
                                         heading_3: Text {
                                             content: "Title".to_string(),
@@ -591,22 +576,17 @@ impl SourcePage {
                                     },
                                     Block::Paragraph {
                                         common: BlockCommon {
-                                            id: BlockId::default(),
-                                            created_time: Utc::now(),
-                                            last_edited_time: Utc::now(),
-                                            has_children: false,
-                                            created_by: UserCommon::default(),
-                                            last_edited_by: UserCommon::default(),
+                                            id: BlockId(uuid::Uuid::new_v4()),
                                         },
                                         paragraph: TextAndChildren {
                                             rich_text: vec![RichText::Text {
                                                 rich_text: RichTextCommon {
-                                                    plain_text: title, // this is title
+                                                    plain_text: self.title, // this is title
                                                     href: None,
                                                     annotations: None,
                                                 },
                                                 text: Text {
-                                                    content: title,// this is title
+                                                    content: self.title,// this is title
                                                     link: None,
                                                 },
                                             }],
@@ -616,12 +596,7 @@ impl SourcePage {
                                     },
                                     Block::Heading3 {
                                         common: BlockCommon {
-                                            id: BlockId::default(),
-                                            created_time: Utc::now(),
-                                            last_edited_time: Utc::now(),
-                                            has_children: false,
-                                            created_by: UserCommon::default(),
-                                            last_edited_by: UserCommon::default(),
+                                            id: BlockId(uuid::Uuid::new_v4()),
                                         },
                                         heading_3: Text {
                                             content: "Description".to_string(),
@@ -630,12 +605,7 @@ impl SourcePage {
                                     },
                                     Block::Paragraph {
                                         common: BlockCommon {
-                                            id: BlockId::default(),
-                                            created_time: Utc::now(),
-                                            last_edited_time: Utc::now(),
-                                            has_children: false,
-                                            created_by: UserCommon::default(),
-                                            last_edited_by: UserCommon::default(),
+                                            id: BlockId(uuid::Uuid::new_v4()),
                                         },
                                         paragraph: TextAndChildren {
                                             rich_text: vec![RichText::Text {
@@ -655,12 +625,7 @@ impl SourcePage {
                                     },
                                     Block::Heading3 {
                                         common: BlockCommon {
-                                            id: BlockId::default(),
-                                            created_time: Utc::now(),
-                                            last_edited_time: Utc::now(),
-                                            has_children: false,
-                                            created_by: UserCommon::default(),
-                                            last_edited_by: UserCommon::default(),
+                                            id: BlockId(uuid::Uuid::new_v4()),
                                         },
                                         heading_3: Text {
                                             content: "link".to_string(),
@@ -669,12 +634,7 @@ impl SourcePage {
                                     },
                                     Block::Embed {
                                         common: BlockCommon {
-                                            id: BlockId::default(),
-                                            created_time: Utc::now(),
-                                            last_edited_time: Utc::now(),
-                                            has_children: false,
-                                            created_by: UserCommon::default(),
-                                            last_edited_by: UserCommon::default(),
+                                            id: BlockId(uuid::Uuid::new_v4()),
                                         },
                                         embed: EmbedFields {
                                             url: link,

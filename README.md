@@ -185,14 +185,14 @@ version: '3'
 
 services:
   notion-rss:
-    image: kaliteam/notion-rss:latest
+    image: lixuanxin9527/notion-rss:latest
     ports:
       - "9527:9527"
     environment:
       NR_NOTION_TOKEN: ${NR_NOTION_TOKEN}
       NR_SOURCE_ID: ${NR_SOURCE_ID}
       NR_ARCHIVE_ID: ${NR_ARCHIVE_ID}
-      NR_API_SERVER: ${NR_API_SERVER}
+      NR_API_SERVER: ${NR_API_SERVER} # ?.?.?.?:9527
       NR_TOKEN: ${NR_TOKEN}
       NR_PROXY: ${NR_PROXY}
       NR_DAEMON: ${NR_DAEMON}

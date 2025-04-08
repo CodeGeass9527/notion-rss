@@ -484,234 +484,157 @@ impl SourcePage {
         Ok(channels)
     }
 
-    pub async fn get_feed(mut self) -> Result<SourcePage> {
-        match Url::parse(&self.link.clone().unwrap_or_default()) {
-            Ok(link) => {
-                // Update icon and setting status to pending
-                let text = self.update_icon().await.unwrap_or_default();
-                let titles = self.get_page_from_database().await.unwrap_or_default();
-                match self.get_feed_entries(link).await {
-                    Ok(feed) => {
-                        // If the title is empty, update the title
-                        if self.title.is_empty() {
-                            if let Some(title) = feed.title {
-                                self.title = to_text(title);
-                            } else {
-                                self.title = get_title(&text);
-                            }
-                        }
-                        for item in feed.entries {
-                            // Skip updating if it is an outdated article
-                            // 如果订阅源有最后更新时间说明已经更新过了，并且大于当前文章发布时间就跳过不添加
-                            if let Some(last_time) = self.last_update_time {
-                                if let Some(published_time) = item.published {
-                                    if last_time > published_time && !titles.is_empty() {
-                                        continue;
-                                    }
-                                }
-                                // 如果文章的更新时间小于订阅源最后更新时间也跳过不添加文章
-                                if let Some(updated_time) = item.updated {
-                                    if last_time > updated_time && !titles.is_empty(){
-                                        continue;
-                                    }
-                                }
-                            }
-                            // Determine whether the title already exists
-                            if let Some(t) = item.title.clone() {
-                                let title = to_text(t);
-                                if titles.contains(&title) {
-                                    println!("Duplicate article already exists: {:?}", title);
-                                    continue;
-                                }
-                            }
-                            let feed_title = to_text(feed.title.expect("REASON"));
-                            let page_properties = make_page(&item, self.id.clone());
-                            let page = notion_sdk::pages::CreatePage {
-                                icon: None,
-                                parent: Parent::Database {
-                                    database_id: NOTION_FEED.archive_id.clone(),
-                                },
-                                properties: Properties {
-                                    properties: page_properties,
-                                },
-                                children: vec![
-                                    Block::Heading3 {
-                                        common: BlockCommon {
-                                            id: BlockId(uuid::Uuid::new_v4()),
-                                            created_time: Utc::now(),
-                                            last_edited_time: Utc::now(),
-                                            has_children: false,
-                                            created_by:  None,
-                                            last_edited_by:  None,
-                                        },
-                                        heading_3: Text {
-                                            content: "From".to_string(),
-                                            link: None,
-                                        },
-                                    },
-                                    Block::Paragraph {
-                                        common: BlockCommon {
-                                            id: BlockId(uuid::Uuid::new_v4()),
-                                            created_time: Utc::now(),
-                                            last_edited_time: Utc::now(),
-                                            has_children: false,
-                                            created_by: None,
-                                            last_edited_by: None,
-                                        },
-                                        paragraph: TextAndChildren {
-                                            rich_text: vec![RichText::Text {
-                                                rich_text: RichTextCommon {
-                                                    plain_text: feed_title,
-                                                    href: None,
-                                                    annotations: None,
-                                                },
-                                                text: Text {
-                                                    content: feed_title,
-                                                    link: None,
-                                                },
-                                            }],
-                                            children: None,
-                                            color: TextColor::Default,
-                                        },
-                                    },
-                                    Block::Heading3 {
-                                        common: BlockCommon {
-                                            id: BlockId(uuid::Uuid::new_v4()),
-                                            created_time: Utc::now(),
-                                            last_edited_time: Utc::now(),
-                                            has_children: false,
-                                            created_by:  None,
-                                            last_edited_by:  None,
-                                        },
-                                        heading_3: Text {
-                                            content: "Title".to_string(),
-                                            link: None,
-                                        },
-                                    },
-                                    Block::Paragraph {
-                                        common: BlockCommon {
-                                            id: BlockId(uuid::Uuid::new_v4()),
-                                            created_time: Utc::now(),
-                                            last_edited_time: Utc::now(),
-                                            has_children: false,
-                                            created_by:  None,
-                                            last_edited_by:  None,
-                                        },
-                                        paragraph: TextAndChildren {
-                                            rich_text: vec![RichText::Text {
-                                                rich_text: RichTextCommon {
-                                                    plain_text: self.title, // this is title
-                                                    href: None,
-                                                    annotations: None,
-                                                },
-                                                text: Text {
-                                                    content: self.title,// this is title
-                                                    link: None,
-                                                },
-                                            }],
-                                            children: None,
-                                            color: TextColor::Default,
-                                        },
-                                    },
-                                    Block::Heading3 {
-                                        common: BlockCommon {
-                                            id: BlockId(uuid::Uuid::new_v4()),
-                                            created_time: Utc::now(),
-                                            last_edited_time: Utc::now(),
-                                            has_children: false,
-                                            created_by:  None,
-                                            last_edited_by:  None,
-                                        },
-                                        heading_3: Text {
-                                            content: "Description".to_string(),
-                                            link: None,
-                                        },
-                                    },
-                                    Block::Paragraph {
-                                        common: BlockCommon {
-                                            id: BlockId(uuid::Uuid::new_v4()),
-                                            created_time: Utc::now(),
-                                            last_edited_time: Utc::now(),
-                                            has_children: false,
-                                            created_by:  None,
-                                            last_edited_by:  None,
-                                        },
-                                        paragraph: TextAndChildren {
-                                            rich_text: vec![RichText::Text {
-                                                rich_text: RichTextCommon {
-                                                    plain_text: to_text(item.summary.expect("REASON")), // this is description
-                                                    href: None,
-                                                    annotations: None,
-                                                },
-                                                text: Text {
-                                                    content: to_text(item.summary.expect("REASON")), // this is description
-                                                    link: None,
-                                                },
-                                            }],
-                                            children: None,
-                                            color: TextColor::Default,
-                                        },
-                                    },
-                                    Block::Heading3 {
-                                        common: BlockCommon {
-                                            id: BlockId(uuid::Uuid::new_v4()),
-                                            created_time: Utc::now(),
-                                            last_edited_time: Utc::now(),
-                                            has_children: false,
-                                            created_by:  None,
-                                            last_edited_by:  None,
-                                        },
-                                        heading_3: Text {
-                                            content: "link".to_string(),
-                                            link: None,
-                                        },
-                                    },
-                                    Block::Embed {
-                                        common: BlockCommon {
-                                            id: BlockId(uuid::Uuid::new_v4()),
-                                            created_time: Utc::now(),
-                                            last_edited_time: Utc::now(),
-                                            has_children: false,
-                                            created_by:  None,
-                                            last_edited_by:  None,
-                                        },
-                                        embed: EmbedFields {
-                                            url: link.to_string(),
-                                        },
-                                    },
-                                ],
-                            };
-                            if let Err(err) = NOTION_FEED.notion.pages_create(page).await {
-                                println!("Add failed: {:?}", err);
-                            } else {
-                                println!("Added successfully: {:?}", item.links.first());
-                            }
-                        }
-                    }
-                    Err(e) => {
-                        self.status = Status::Error;
-                        self.log = Some(e.to_string());
-                        self.update_source_page(None).await;
-                        return Err(anyhow!(e));
-                    }
-                }
-            }
+    pub async fn get_feed(mut self) -> Result<Self> {
+        let link = match Url::parse(&self.link.clone().unwrap_or_default()) {
+            Ok(link) => link,
             Err(e) => {
                 self.status = Status::Error;
                 self.log = Some(e.to_string());
                 self.update_source_page(None).await;
                 return Err(anyhow!(e));
             }
+        };
+    
+        let text = self.update_icon().await.unwrap_or_default();
+        let titles = self.get_page_from_database().await.unwrap_or_default();
+    
+        let feed = match self.get_feed_entries(link.clone()).await {
+            Ok(feed) => feed,
+            Err(e) => {
+                self.status = Status::Error;
+                self.log = Some(e.to_string());
+                self.update_source_page(None).await;
+                return Err(anyhow!(e));
+            }
+        };
+    
+        if self.title.is_empty() {
+            self.title = feed
+                .title
+                .as_ref()
+                .map(|t| to_text(t.clone()))
+                .unwrap_or_else(|| get_title(&text));
         }
+    
+        let feed_title = feed
+            .title
+            .as_ref()
+            .map(|t| to_text(t.clone()))
+            .unwrap_or_default();
+    
+        for item in feed.entries {
+            if let Some(last_time) = self.last_update_time {
+                if let Some(published_time) = item.published {
+                    if last_time > published_time && !titles.is_empty() {
+                        continue;
+                    }
+                }
+                if let Some(updated_time) = item.updated {
+                    if last_time > updated_time && !titles.is_empty() {
+                        continue;
+                    }
+                }
+            }
+    
+            if let Some(t) = item.title.as_ref() {
+                let title = to_text(t.clone());
+                if titles.contains(&title) {
+                    println!("Duplicate article already exists: {:?}", title);
+                    continue;
+                }
+            }
+    
+            let summary = item
+                .summary
+                .as_ref()
+                .map(|s| to_text(s.clone()))
+                .unwrap_or_default();
+    
+            let page_properties = make_page(&item, self.id.clone());
+    
+            let page = notion_sdk::pages::CreatePage {
+                icon: None,
+                parent: Parent::Database {
+                    database_id: NOTION_FEED.archive_id.clone(),
+                },
+                properties: Properties {
+                    properties: page_properties,
+                },
+                children: vec![
+                    create_heading("From"),
+                    create_paragraph(feed_title.clone()),
+                    create_heading("Title"),
+                    create_paragraph(self.title.clone()),
+                    create_heading("Description"),
+                    create_paragraph(summary),
+                    create_heading("link"),
+                    Block::Embed {
+                        common: create_common_block(),
+                        embed: EmbedFields {
+                            url: link.to_string(),
+                        },
+                    },
+                ],
+            };
+    
+            if let Err(err) = NOTION_FEED.notion.pages_create(page).await {
+                println!("Add failed: {:?}", err);
+            } else {
+                println!("Added successfully: {:?}", item.links.first());
+            }
+        }
+    
         let now = DateValue {
             start: DateOrDateTime::DateTime(Utc::now()),
             end: None,
             time_zone: None,
         };
+    
         self.status = Status::Done;
         self.log = None;
         self.update_source_page(Some(now.clone())).await;
         Ok(self)
+    }
+    fn create_common_block() -> BlockCommon {
+        BlockCommon {
+            id: BlockId(uuid::Uuid::new_v4()),
+            created_time: Utc::now(),
+            last_edited_time: Utc::now(),
+            has_children: false,
+            created_by: None,
+            last_edited_by: None,
+        }
+    }
+    
+    fn create_heading(title: &str) -> Block {
+        Block::Heading3 {
+            common: create_common_block(),
+            heading_3: Text {
+                content: title.to_string(),
+                link: None,
+            },
+        }
+    }
+    
+    fn create_paragraph(content: String) -> Block {
+        Block::Paragraph {
+            common: create_common_block(),
+            paragraph: TextAndChildren {
+                rich_text: vec![RichText::Text {
+                    rich_text: RichTextCommon {
+                        plain_text: content.clone(),
+                        href: None,
+                        annotations: None,
+                    },
+                    text: Text {
+                        content,
+                        link: None,
+                    },
+                }],
+                children: None,
+                color: TextColor::Default,
+            },
+        }
     }
     async fn update_source_page(&self, last_time: Option<DateValue>) {
         let mut page_properties = HashMap::new();

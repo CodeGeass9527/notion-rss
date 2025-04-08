@@ -5,13 +5,15 @@ use encoding_rs::{Encoding, UTF_8};
 use mime::Mime;
 use notion_sdk::common::file::{ExternalFileObject, FileOrEmojiObject};
 use notion_sdk::common::parent::Parent;
-use notion_sdk::common::rich_text::{RichText, RichTextCommon, Text};
+use notion_sdk::common::rich_text::{RichText, RichTextCommon, Text, TextColor};
 use notion_sdk::database::date::{DateOrDateTime, DateValue};
 use notion_sdk::database::id::DatabaseId;
 use notion_sdk::database::properties::{Properties, PropertyValue};
 use notion_sdk::database::relation::RelationValue;
 use notion_sdk::database::select::SelectedValue;
 use notion_sdk::database::Color;
+use notion_sdk::block::id::BlockId;
+use notion_sdk::block::Block;
 use notion_sdk::pages::id::PageId;
 use notion_sdk::pages::{Page, UpdatePage};
 use notion_sdk::pagination::Object;
@@ -531,7 +533,152 @@ impl SourcePage {
                                 properties: Properties {
                                     properties: page_properties,
                                 },
-                                children: vec![],
+                                children: vec![
+                                    Block::Heading3 {
+                                        common: BlockCommon {
+                                            id: BlockId::new(),
+                                            created_time: Utc::now(),
+                                            last_edited_time: Utc::now(),
+                                            has_children: false,
+                                            created_by: UserCommon::default(),
+                                            last_edited_by: UserCommon::default(),
+                                        },
+                                        heading_3: Text {
+                                            content: "From".to_string(),
+                                            link: None,
+                                        },
+                                    },
+                                    Block::Paragraph {
+                                        common: BlockCommon {
+                                            id: BlockId::new(),
+                                            created_time: Utc::now(),
+                                            last_edited_time: Utc::now(),
+                                            has_children: false,
+                                            created_by: UserCommon::default(),
+                                            last_edited_by: UserCommon::default(),
+                                        },
+                                        paragraph: TextAndChildren {
+                                            rich_text: vec![RichText::Text {
+                                                rich_text: RichTextCommon {
+                                                    plain_text: feed.title,
+                                                    href: None,
+                                                    annotations: None,
+                                                },
+                                                text: Text {
+                                                    content: feed.title,
+                                                    link: None,
+                                                },
+                                            }],
+                                            children: None,
+                                            color: TextColor::Default,
+                                        },
+                                    },
+                                    Block::Heading3 {
+                                        common: BlockCommon {
+                                            id: BlockId::new(),
+                                            created_time: Utc::now(),
+                                            last_edited_time: Utc::now(),
+                                            has_children: false,
+                                            created_by: UserCommon::default(),
+                                            last_edited_by: UserCommon::default(),
+                                        },
+                                        heading_3: Text {
+                                            content: "Title".to_string(),
+                                            link: None,
+                                        },
+                                    },
+                                    Block::Paragraph {
+                                        common: BlockCommon {
+                                            id: BlockId::new(),
+                                            created_time: Utc::now(),
+                                            last_edited_time: Utc::now(),
+                                            has_children: false,
+                                            created_by: UserCommon::default(),
+                                            last_edited_by: UserCommon::default(),
+                                        },
+                                        paragraph: TextAndChildren {
+                                            rich_text: vec![RichText::Text {
+                                                rich_text: RichTextCommon {
+                                                    plain_text: title, // this is title
+                                                    href: None,
+                                                    annotations: None,
+                                                },
+                                                text: Text {
+                                                    content: title,// this is title
+                                                    link: None,
+                                                },
+                                            }],
+                                            children: None,
+                                            color: TextColor::Default,
+                                        },
+                                    },
+                                    Block::Heading3 {
+                                        common: BlockCommon {
+                                            id: BlockId::new(),
+                                            created_time: Utc::now(),
+                                            last_edited_time: Utc::now(),
+                                            has_children: false,
+                                            created_by: UserCommon::default(),
+                                            last_edited_by: UserCommon::default(),
+                                        },
+                                        heading_3: Text {
+                                            content: "Description".to_string(),
+                                            link: None,
+                                        },
+                                    },
+                                    Block::Paragraph {
+                                        common: BlockCommon {
+                                            id: BlockId::new(),
+                                            created_time: Utc::now(),
+                                            last_edited_time: Utc::now(),
+                                            has_children: false,
+                                            created_by: UserCommon::default(),
+                                            last_edited_by: UserCommon::default(),
+                                        },
+                                        paragraph: TextAndChildren {
+                                            rich_text: vec![RichText::Text {
+                                                rich_text: RichTextCommon {
+                                                    plain_text: summary, // this is description
+                                                    href: None,
+                                                    annotations: None,
+                                                },
+                                                text: Text {
+                                                    content: summary, // this is description
+                                                    link: None,
+                                                },
+                                            }],
+                                            children: None,
+                                            color: TextColor::Default,
+                                        },
+                                    },
+                                    Block::Heading3 {
+                                        common: BlockCommon {
+                                            id: BlockId::new(),
+                                            created_time: Utc::now(),
+                                            last_edited_time: Utc::now(),
+                                            has_children: false,
+                                            created_by: UserCommon::default(),
+                                            last_edited_by: UserCommon::default(),
+                                        },
+                                        heading_3: Text {
+                                            content: "link".to_string(),
+                                            link: None,
+                                        },
+                                    },
+                                    Block::Embed {
+                                        common: BlockCommon {
+                                            id: BlockId::new(),
+                                            created_time: Utc::now(),
+                                            last_edited_time: Utc::now(),
+                                            has_children: false,
+                                            created_by: UserCommon::default(),
+                                            last_edited_by: UserCommon::default(),
+                                        },
+                                        embed: EmbedFields {
+                                            url: link,
+                                        },
+                                    },
+                                ],
                             };
                             if let Err(err) = NOTION_FEED.notion.pages_create(page).await {
                                 println!("Add failed: {:?}", err);

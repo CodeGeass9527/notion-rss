@@ -23,7 +23,7 @@ jobs:
   create-release:
     permissions:
       contents: write
-    runs-on: ubuntu-20.04
+    runs-on: ubuntu-22.04
     outputs:
       release_id: ${{ steps.release.outputs.id }}
       upload_url: ${{ steps.release.outputs.upload_url }}
@@ -68,7 +68,7 @@ jobs:
         platform: [ linux-musl ]
         include:
           # - platform: linux
-          #   os: ubuntu-20.04
+          #   os: ubuntu-22.04
           #   rust: stable
           #   target: x86_64-unknown-linux-gnu
           # - platform: macos
@@ -84,15 +84,15 @@ jobs:
           #   rust: stable
           #   target: x86_64-pc-windows-msvc
           - platform: linux-musl
-            os: ubuntu-20.04
+            os: ubuntu-22.04
             rust: stable
             target: x86_64-unknown-linux-musl
           # - platform: linux-arm-v7
-          #   os: ubuntu-20.04
+          #   os: ubuntu-22.04
           #   rust: stable
           #   target: armv7-unknown-linux-gnueabihf
           # - platform: linux-aarch64
-          #   os: ubuntu-20.04
+          #   os: ubuntu-22.04
           #   rust: stable
           #   target: aarch64-unknown-linux-gnu
     runs-on: ${{ matrix.os }}
@@ -128,7 +128,7 @@ jobs:
           sed -i -e "s/^version = .*/version = \"`date +'%-y.%-m.%-d'`\"/" Cargo.toml
           sed -i -e "s/\"version\": \".*/\"version\": \"`date +'%-y.%-m.%-d'`\",/" src-tauri/tauri.conf.json
       - name: install dependencies (ubuntu only)
-        if: matrix.os == 'ubuntu-20.04'
+        if: matrix.os == 'ubuntu-22.04'
         shell: bash
         run: |
           sudo apt-get update
@@ -193,7 +193,7 @@ jobs:
   publish-release:
     permissions:
       contents: write
-    runs-on: ubuntu-20.04
+    runs-on: ubuntu-22.04
     needs: [ create-release, build-tauri ]
     steps:
       - name: publish release
@@ -211,7 +211,7 @@ jobs:
               prerelease: false
             })
   docker:
-    runs-on: ubuntu-20.04
+    runs-on: ubuntu-22.04
     needs:
       - publish-release
     steps:

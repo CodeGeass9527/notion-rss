@@ -14,7 +14,7 @@ use notion_sdk::database::select::SelectedValue;
 use notion_sdk::database::Color;
 use notion_sdk::block::id::BlockId;
 use notion_sdk::block::{Block, BlockCommon, TextAndChildren, EmbedFields};
-use notion_sdk::user::{UserCommon};
+use notion_sdk::user::UserCommon;
 use notion_sdk::pages::id::PageId;
 use notion_sdk::pages::{Page, UpdatePage};
 use notion_sdk::pagination::Object;
@@ -601,12 +601,12 @@ impl SourcePage {
                                         paragraph: TextAndChildren {
                                             rich_text: vec![RichText::Text {
                                                 rich_text: RichTextCommon {
-                                                    plain_text: item.title, // this is title
+                                                    plain_text: self.title, // this is title
                                                     href: None,
                                                     annotations: None,
                                                 },
                                                 text: Text {
-                                                    content: item.title,// this is title
+                                                    content: self.title,// this is title
                                                     link: None,
                                                 },
                                             }],
@@ -640,12 +640,12 @@ impl SourcePage {
                                         paragraph: TextAndChildren {
                                             rich_text: vec![RichText::Text {
                                                 rich_text: RichTextCommon {
-                                                    plain_text: item.summary, // this is description
+                                                    plain_text: to_text(item.summary.expect("REASON")), // this is description
                                                     href: None,
                                                     annotations: None,
                                                 },
                                                 text: Text {
-                                                    content: item.summary, // this is description
+                                                    content: to_text(item.summary.expect("REASON")), // this is description
                                                     link: None,
                                                 },
                                             }],

@@ -12,7 +12,7 @@ tauri-build = { version = "1.2.1", features = [] }
 [dependencies]
 opml = "1.1.5"
 argh = "0.1.8"
-notion-sdk = { git = "https://github.com/emo-cat/notion-rs" }
+notion-sdk = { git = "https://github.com/CodeGeass9527/notion-rs" }
 uuid = { version = "1.2", features = ["v4"] }
 tokio = { version = "1.25.0", features = ["full"] }
 futures = { version = "0.3", features = ["compat"] }

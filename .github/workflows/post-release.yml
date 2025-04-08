@@ -143,7 +143,10 @@ jobs:
           echo "C:\Program Files\NASM" >> $GITHUB_PATH
           echo "OPENSSL_RUST_USE_NASM=1" >> $GITHUB_ENV
       - name: install frontend dependencies
-        run: yarn install # change this to npm or pnpm depending on which one you use
+      # change this to npm or pnpm depending on which one you use
+        run: | 
+          yarn install 
+          yarn add tauri
       - name: Build tauri app
         uses: tauri-apps/tauri-action@v0.3.1
         if: matrix.platform == 'win-msvc' ||  matrix.platform == 'linux' || matrix.platform == 'macos' || matrix.platform == 'macos_aarch64'

@@ -14,7 +14,6 @@ use notion_sdk::database::select::SelectedValue;
 use notion_sdk::database::Color;
 use notion_sdk::block::id::BlockId;
 use notion_sdk::block::{Block, BlockCommon, TextAndChildren, EmbedFields};
-use notion_sdk::user::UserCommon;
 use notion_sdk::pages::id::PageId;
 use notion_sdk::pages::{Page, UpdatePage};
 use notion_sdk::pagination::Object;
@@ -677,7 +676,7 @@ impl SourcePage {
                                             last_edited_by:  None,
                                         },
                                         embed: EmbedFields {
-                                            url: link,
+                                            url: link.to_string(),
                                         },
                                     },
                                 ],

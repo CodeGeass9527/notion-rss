@@ -563,7 +563,6 @@ impl SourcePage {
         };
     
         let text = self.update_icon().await.unwrap_or_default();
-        println!("🔸 get_feed:text: {}", text);
         let titles = self.get_page_from_database().await.unwrap_or_default();
     
         let feed = match self.get_feed_entries(link.clone()).await {
@@ -625,7 +624,25 @@ impl SourcePage {
                 .unwrap_or_default();
     
             let page_properties = make_page(&item, self.id.clone());
+
+            let published_at_value = match page_properties.get("Published At") {
+                Some(PropertyValue::Date { date, .. }) => {
+                    date.as_ref().map_or(String::new(), |d| {
+                        d.start.to_string()
+                    })
+                },
+                _ => String::new(),
+            };
     
+            let last_update_at_value = match page_properties.get("Last Update") {
+                Some(PropertyValue::Date { date, .. }) => {
+                    date.as_ref().map_or(String::new(), |d| {
+                        d.start.to_string()
+                    })
+                },
+                _ => String::new(),
+            };
+
             let page = notion_sdk::pages::CreatePage {
                 icon: None,
                 parent: Parent::Database {
@@ -641,8 +658,17 @@ impl SourcePage {
                     create_paragraph(title),
                     create_heading("Description"),
                     create_paragraph(summary),
+                    create_heading("Last Update At"),
+                    create_paragraph(last_update_at_value),
+                    create_heading("Published At"),
+                    create_paragraph(published_at_value),
                     create_heading("link"),
-                    create_link(&link.to_string()),
+                    create_link(item
+                        .link
+                        .to_string()
+                        .as_ref()
+                        .map(|s| to_text(s.clone()))
+                        .unwrap_or_default()),
                 ],
             };
     

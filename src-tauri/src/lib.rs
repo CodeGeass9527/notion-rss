@@ -419,21 +419,21 @@ fn make_page(item: &feed_rs::model::Entry, page_id: PageId) -> HashMap<String, P
     page_properties
 }
 
-fn create_common_block() -> BlockCommon {
-    BlockCommon {
-        id: BlockId(uuid::Uuid::new_v4()),
-        created_time: Utc::now(),
-        last_edited_time: Utc::now(),
-        has_children: false,
-        created_by: None,
-        last_edited_by: None,
-    }
-}
+// fn create_common_block() -> BlockCommon {
+//     BlockCommon {
+//         id: BlockId(uuid::Uuid::new_v4()),
+//         created_time: Utc::now(),
+//         last_edited_time: Utc::now(),
+//         has_children: false,
+//         created_by: None,
+//         last_edited_by: None,
+//     }
+// }
 
 fn create_heading(title: &str) -> Block {
     println!("[create_heading] title = {}", title);
     Block::Heading3 {
-        common: create_common_block(),
+        common: BlockCommon::default();
         heading_3: HeadingText {
             rich_text: vec![RichText::Text {
                 rich_text: RichTextCommon {
@@ -455,7 +455,7 @@ fn create_heading(title: &str) -> Block {
 fn create_paragraph(content: String) -> Block {
     println!("[create_paragraph] content = {}", content);
     Block::Paragraph {
-        common: create_common_block(),
+        common: BlockCommon::default();
         paragraph: TextAndChildren {
             rich_text: vec![RichText::Text {
                 rich_text: RichTextCommon {
@@ -631,7 +631,7 @@ impl SourcePage {
                     create_paragraph(summary),
                     create_heading("link"),
                     Block::Embed {
-                        common: create_common_block(),
+                        common: BlockCommon::default();
                         embed: EmbedFields {
                             url: link.to_string(),
                         },

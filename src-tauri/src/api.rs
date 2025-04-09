@@ -125,6 +125,7 @@ async fn not_found() -> impl Responder {
 #[actix_web::main]
 async fn api_server(listening_address: SocketAddr, token: String) {
     std::env::set_var("RUST_LOG", "actix_web=info");
+    std::env::set_var("RUST_LOG", "notion_sdk=debug");
     let token_path = token.clone();
     let http_server = HttpServer::new(move || {
         App::new()

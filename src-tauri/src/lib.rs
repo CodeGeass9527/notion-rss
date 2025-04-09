@@ -5,7 +5,7 @@ use encoding_rs::{Encoding, UTF_8};
 use mime::Mime;
 use notion_sdk::common::file::{ExternalFileObject, FileOrEmojiObject};
 use notion_sdk::common::parent::Parent;
-use notion_sdk::common::rich_text::{RichText, RichTextCommon, Text, TextColor};
+use notion_sdk::common::rich_text::{RichText, RichTextCommon, Text, TextColor, Link};
 use notion_sdk::database::date::{DateOrDateTime, DateValue};
 use notion_sdk::database::id::DatabaseId;
 use notion_sdk::database::properties::{Properties, PropertyValue};
@@ -331,20 +331,18 @@ fn make_page(item: &feed_rs::model::Entry, page_id: PageId) -> HashMap<String, P
         Some(title) => title.content,
         None => String::new(),
     };
+
     let summary = match item.summary {
-        Some(summary) => summary.content,
+        Some(summary) => to_text(summary.content), // remove HTML
         None => String::new(),
     };
+    
+    let summary_char: String = summary.chars().take(101).collect();
+
     if let Some(l) = item.links.into_iter().next() {
         links = l.href;
     }
-    let mut summary_char = String::new();
-    for (i, c) in summary.chars().enumerate() {
-        summary_char.push(c);
-        if i > 100 {
-            break;
-        }
-    }
+
     let mut page_properties = HashMap::new();
     page_properties.insert(
         "Title".to_string(),
@@ -419,16 +417,6 @@ fn make_page(item: &feed_rs::model::Entry, page_id: PageId) -> HashMap<String, P
     page_properties
 }
 
-// fn create_common_block() -> BlockCommon {
-//     BlockCommon {
-//         id: BlockId(uuid::Uuid::new_v4()),
-//         created_time: Utc::now(),
-//         last_edited_time: Utc::now(),
-//         has_children: false,
-//         created_by: None,
-//         last_edited_by: None,
-//     }
-// }
 
 fn create_heading(title: &str) -> Block {
     println!("[create_heading] title = {}", title);
@@ -438,16 +426,12 @@ fn create_heading(title: &str) -> Block {
             rich_text: vec![RichText::Text {
                 rich_text: RichTextCommon {
                     plain_text: title.to_string(),
-                    href: None,
-                    annotations: None,
                 },
                 text: Text {
                     content: title.to_string(),
-                    link: None,
                 },
             }],
             color: TextColor::Default,
-            is_toggleable: false,
         },
     }
 }
@@ -460,20 +444,36 @@ fn create_paragraph(content: String) -> Block {
             rich_text: vec![RichText::Text {
                 rich_text: RichTextCommon {
                     plain_text: content.clone(),
-                    href: None,
-                    annotations: None,
                 },
                 text: Text {
                     content,
-                    link: None,
                 },
             }],
-            children: None,
             color: TextColor::Default,
         },
     }
 }
 
+fn create_link(link: &str) -> Block {
+    println!("[create_link] link = {}", link);
+    Block::Paragraph {
+        common: BlockCommon::default(),
+        paragraph: TextAndChildren {
+            rich_text: vec![RichText::Text {
+                rich_text: RichTextCommon {
+                    plain_text: link.to_string(),
+                },
+                text: Text {
+                    content: link.to_string(),
+                    link: Link {
+                        url: link.to_string(),
+                    };
+                },
+            }],
+            color: TextColor::Default,
+        },
+    }
+}
 
 // Database field of the feed
 #[derive(Serialize, Deserialize, Clone, Debug)]
@@ -630,12 +630,7 @@ impl SourcePage {
                     create_heading("Description"),
                     create_paragraph(summary),
                     create_heading("link"),
-                    Block::Embed {
-                        common: BlockCommon::default(),
-                        embed: EmbedFields {
-                            url: link.to_string(),
-                        },
-                    },
+                    create_link(link),
                 ],
             };
     

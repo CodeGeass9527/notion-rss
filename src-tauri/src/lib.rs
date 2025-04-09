@@ -334,7 +334,7 @@ fn make_page(item: &feed_rs::model::Entry, page_id: PageId) -> HashMap<String, P
     };
 
     let summary = match item.summary {
-        Some(summary) => to_text(summary.content), // remove HTML
+        Some(summary) => to_text(summary), // remove HTML
         None => String::new(),
     };
     
@@ -427,12 +427,16 @@ fn create_heading(title: &str) -> Block {
             rich_text: vec![RichText::Text {
                 rich_text: RichTextCommon {
                     plain_text: title.to_string(),
+                    href: None,
+                    annotations: None,
                 },
                 text: Text {
                     content: title.to_string(),
+                    link: None,
                 },
             }],
             color: TextColor::Default,
+            is_toggleable: false,
         },
     }
 }
@@ -445,12 +449,16 @@ fn create_paragraph(content: String) -> Block {
             rich_text: vec![RichText::Text {
                 rich_text: RichTextCommon {
                     plain_text: content.clone(),
+                    href: None,
+                    annotations: None,
                 },
                 text: Text {
                     content,
+                    link: None,
                 },
             }],
             color: TextColor::Default,
+            children: vec![],
         },
     }
 }
@@ -463,15 +471,18 @@ fn create_link(link: &str) -> Block {
             rich_text: vec![RichText::Text {
                 rich_text: RichTextCommon {
                     plain_text: link.to_string(),
+                    href: None,
+                    annotations: None,
                 },
                 text: Text {
                     content: link.to_string(),
                     link: Link {
                         url: link.to_string(),
-                    };
+                    },
                 },
             }],
             color: TextColor::Default,
+            children: vec![],
         },
     }
 }
@@ -632,7 +643,7 @@ impl SourcePage {
                     create_heading("Description"),
                     create_paragraph(summary),
                     create_heading("link"),
-                    create_link(link),
+                    create_link(link.to_string()),
                 ],
             };
     

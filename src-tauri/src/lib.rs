@@ -457,7 +457,7 @@ fn create_paragraph(content: String) -> Block {
                 },
             }],
             color: TextColor::Default,
-            children: vec![].into(),,
+            children: vec![].into(),
         },
     }
 }
@@ -481,7 +481,7 @@ fn create_link(link: &str) -> Block {
                 },
             }],
             color: TextColor::Default,
-            children: vec![].into(),,
+            children: vec![].into(),
         },
     }
 }

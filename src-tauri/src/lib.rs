@@ -648,7 +648,7 @@ impl SourcePage {
             let link_block = if let Some(first_link) = item.links.first() {
                 create_link(first_link.href.as_str())
             } else {
-                create_paragraph("No link available")
+                create_paragraph("No link available".to_string())
             };
             
             let page = notion_sdk::pages::CreatePage {

@@ -201,6 +201,7 @@ pub fn get_title(text: &str) -> String {
         }
     }
     if let Some(m) = RE_TITLE.captures(text) {
+        println!("🔸 Get title: {}", m);
         return m
             .name("title")
             .map_or("", |m| m.as_str())

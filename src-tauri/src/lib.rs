@@ -599,6 +599,12 @@ impl SourcePage {
                     continue;
                 }
             }
+
+            let title = item
+            .title
+            .as_ref()
+            .map(|s| to_text(s.clone()))
+            .unwrap_or_default();
     
             let summary = item
                 .summary
@@ -620,7 +626,7 @@ impl SourcePage {
                     create_heading("From"),
                     create_paragraph(feed_title.clone()),
                     create_heading("Title"),
-                    create_paragraph(self.title.clone()),
+                    create_paragraph(title),
                     create_heading("Description"),
                     create_paragraph(summary),
                     create_heading("link"),

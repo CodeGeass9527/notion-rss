@@ -12,8 +12,7 @@ use notion_sdk::database::properties::{Properties, PropertyValue};
 use notion_sdk::database::relation::RelationValue;
 use notion_sdk::database::select::SelectedValue;
 use notion_sdk::database::Color;
-use notion_sdk::block::id::BlockId;
-use notion_sdk::block::{Block, BlockCommon, TextAndChildren, EmbedFields, HeadingText};
+use notion_sdk::block::{Block, BlockCommon, TextAndChildren, HeadingText};
 use notion_sdk::pages::id::PageId;
 use notion_sdk::pages::{Page, UpdatePage};
 use notion_sdk::pagination::Object;
@@ -436,7 +435,7 @@ fn create_heading(title: &str) -> Block {
                 },
             }],
             color: TextColor::Default,
-            is_toggleable: false,
+            is_toggleable: Some(false),
         },
     }
 }
@@ -458,7 +457,7 @@ fn create_paragraph(content: String) -> Block {
                 },
             }],
             color: TextColor::Default,
-            children: vec![],
+            children: vec![].into(),,
         },
     }
 }
@@ -476,13 +475,13 @@ fn create_link(link: &str) -> Block {
                 },
                 text: Text {
                     content: link.to_string(),
-                    link: Link {
+                    link: Some(Link {
                         url: link.to_string(),
-                    },
+                    }),
                 },
             }],
             color: TextColor::Default,
-            children: vec![],
+            children: vec![].into(),,
         },
     }
 }
@@ -643,7 +642,7 @@ impl SourcePage {
                     create_heading("Description"),
                     create_paragraph(summary),
                     create_heading("link"),
-                    create_link(link.to_string()),
+                    create_link(&link.to_string()),
                 ],
             };
     

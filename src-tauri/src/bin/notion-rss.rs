@@ -34,6 +34,7 @@ ________________________________________________
 #[tokio::main]
 async fn main() -> Result<()> {
     println!("{}", BANNER);
+    std::env::set_var("RUST_LOG", "notion_sdk=debug");
     let config = NotionConfig::default();
     // add subscribe from file
     if let Some(p) = &config.file {

@@ -27,8 +27,7 @@ const BANNER: &str = r#"
 ╚═╝  ╚═══╝ ╚═════╝    ╚═╝   ╚═╝ ╚═════╝ ╚═╝  ╚═══╝      ╚═╝  ╚═╝╚══════╝╚══════╝
 Build your own RSS Feeds in Notion.
 ________________________________________________
-:  https://github.com/cn-kali-team/notion-rss  :
-:  https://blog.kali-team.cn/donate            :
+:  https://github.com/CodeGeass9527/notion-rss  :
  -----------------------------------------------
 "#;
 

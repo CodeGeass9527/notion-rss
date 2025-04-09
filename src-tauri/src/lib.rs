@@ -433,7 +433,7 @@ fn make_page(item: &feed_rs::model::Entry, page_id: PageId) -> HashMap<String, P
 fn create_heading(title: &str) -> Block {
     println!("[create_heading] title = {}", title);
     Block::Heading3 {
-        common: BlockCommon::default();
+        common: BlockCommon::default(),
         heading_3: HeadingText {
             rich_text: vec![RichText::Text {
                 rich_text: RichTextCommon {
@@ -455,7 +455,7 @@ fn create_heading(title: &str) -> Block {
 fn create_paragraph(content: String) -> Block {
     println!("[create_paragraph] content = {}", content);
     Block::Paragraph {
-        common: BlockCommon::default();
+        common: BlockCommon::default(),
         paragraph: TextAndChildren {
             rich_text: vec![RichText::Text {
                 rich_text: RichTextCommon {
@@ -631,7 +631,7 @@ impl SourcePage {
                     create_paragraph(summary),
                     create_heading("link"),
                     Block::Embed {
-                        common: BlockCommon::default();
+                        common: BlockCommon::default(),
                         embed: EmbedFields {
                             url: link.to_string(),
                         },

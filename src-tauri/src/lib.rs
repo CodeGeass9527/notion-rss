@@ -627,22 +627,30 @@ impl SourcePage {
 
             let published_at_value = match page_properties.get("Published At") {
                 Some(PropertyValue::Date { date, .. }) => {
-                    date.as_ref().map_or(String::new(), |d| {
-                        d.start.to_string()
+                    date.as_ref().map_or(String::new(), |d| match &d.start {
+                        DateOrDateTime::Date(naive_date) => naive_date.to_string(), // e.g. "2025-04-09"
+                        DateOrDateTime::DateTime(datetime) => datetime.format("%Y-%m-%d %H:%M:%S").to_string(), // e.g. "2025-04-09T12:34:56Z"
                     })
                 },
                 _ => String::new(),
             };
-    
+            
             let last_update_at_value = match page_properties.get("Last Update") {
                 Some(PropertyValue::Date { date, .. }) => {
-                    date.as_ref().map_or(String::new(), |d| {
-                        d.start.to_string()
+                    date.as_ref().map_or(String::new(), |d| match &d.start {
+                        DateOrDateTime::Date(naive_date) => naive_date.to_string(),
+                        DateOrDateTime::DateTime(datetime) => datetime.format("%Y-%m-%d %H:%M:%S").to_string(),
                     })
                 },
                 _ => String::new(),
             };
 
+            let link_block = if let Some(first_link) = item.links.first() {
+                create_link(first_link.href.as_str())
+            } else {
+                create_paragraph("No link available")
+            };
+            
             let page = notion_sdk::pages::CreatePage {
                 icon: None,
                 parent: Parent::Database {
@@ -663,12 +671,7 @@ impl SourcePage {
                     create_heading("Published At"),
                     create_paragraph(published_at_value),
                     create_heading("link"),
-                    create_link(item
-                        .link
-                        .to_string()
-                        .as_ref()
-                        .map(|s| to_text(s.clone()))
-                        .unwrap_or_default()),
+                    link_block,
                 ],
             };
     
